@@ -76,13 +76,26 @@ namespace PropertyManagementSystem
             int streetNamePos = streetName.CompareTo(currentStreetName);
             int streetNumberPos = streetNumber.CompareTo(currentStreetNumber);
 
+            int unitPos = 0;
+            if (property is Apartment currentApartment && this is Apartment apartment)
+            {
+                unitPos = apartment.Unit.CompareTo(currentApartment.Unit);
+            }
+
             if (statePos == 0)
             {
                 if (cityPos == 0)
                 {
                     if (streetNamePos == 0)
                     {
-                        return streetNumberPos;
+                        if (streetNumberPos == 0)
+                        {
+                            return unitPos;
+                        }
+                        else
+                        {
+                            return streetNumberPos;
+                        }
                     }
                     else
                     {

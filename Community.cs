@@ -49,13 +49,17 @@ namespace PropertyManagementSystem
             }
         }
 
-        public void addResident (Person person)
+        public void AddResident (Person person)
         {
             Residents.Add(person);
         }
-        public void addProperty (Property property)
+        public void AddProperty (Property property)
         {
-            Props.Add(property);
+            bool wasAdded = Props.Add(property);
+            if (!wasAdded)
+            {
+                throw new Exception("Failed to add new property");
+            }
         }
 
         public int CompareTo (object alpha)
@@ -85,26 +89,85 @@ namespace PropertyManagementSystem
                 string forSaleText = (property.ForSale) ? "FOR SALE" : "NOT FOR SALE";
                 string apartmentText = "";
                 string houseText = "";
-                if (property is Apartment)
+
+                if (property is Apartment apartment)
                 {
-                    Apartment apartment = (Apartment)property;
                     apartmentText = $"Apt.# {apartment.Unit}";
                 }
                 else
                 {
                     House house = (House)property;
-                    houseText = $"... {house.GarageText()} : {house.Floors.ToString()} floor.";
+                    houseText = $"... {house.GarageText()} : {house.Floors.ToString()} floor.\n";
                 }
+
                 Console.WriteLine($"Property Address: {property.StreetAddr} / {property.City} / {property.State} / {property.Zip}");
                 Console.WriteLine($"\tOwned By {resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}");
-                Console.WriteLine($"\t({forSaleText} {property.Bedrooms} bedrooms \\ {property.Baths} baths \\ {property.Sqft} sq. ft. {apartmentText}");
-                Console.WriteLine($"\t{houseText}\n");
+                Console.WriteLine($"\t({forSaleText}) {property.Bedrooms} bedrooms \\ {property.Baths} baths \\ {property.Sqft} sq. ft. {apartmentText}");
+                Console.Write($"\t{houseText}\n");
+            }
+        }
+
+        public void DisplayProperties (string propertyType)
+        {
+            Console.WriteLine($"List of addresses of {propertyType} properties in the {this.name} community.");
+            Console.WriteLine("-----------------------------------------------------------------------\n");
+
+            IEnumerable<Property> residences = GetProperties(propertyType);
+            foreach (Property residence in residences)
+            {
+                string unitText = " ";
+                if (residence is Apartment apartment)
+                {
+                    unitText = $" Apt.# {apartment.Unit} ";
+
+                }
+                Console.WriteLine($"{residence.StreetAddr}{unitText}{residence.City}, {residence.State}, {residence.Zip}\n");
+            }
+        }
+
+        public void DisplayForSaleProperties ()
+        {
+            Console.WriteLine($"List of addresses for all FOR SALE properties in the {this.name} community.");
+            Console.WriteLine("-----------------------------------------------------------------------\n");
+
+            IEnumerable<Property> forSaleProperties = GetForSaleProperties();
+
+            foreach (Property forSaleProperty in forSaleProperties)
+            {
+                string unitInfo = " ";
+                if (forSaleProperty is Apartment apartment)
+                {
+                    unitInfo = $" Apt.# {apartment.Unit} ";
+                }
+
+                Console.WriteLine($"{forSaleProperty.StreetAddr}{unitInfo}{forSaleProperty.City}, {forSaleProperty.State}, {forSaleProperty.Zip}");
+            }
+        }
+
+        public void DisplayResidents ()
+        {
+            Console.WriteLine($"List of all residents in the {this.name} community.");
+            Console.WriteLine("-----------------------------------------------------------------------\n");
+
+            foreach (Person resident in Residents)
+            {
+                Console.WriteLine($"{resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}\n");
             }
         }
 
         private Person FindResident (uint ownerId)
         {
             return Residents.FirstOrDefault(resident => resident.id == ownerId);
+        }
+
+        private IEnumerable<Property> GetProperties (string propertyType)
+        {
+            return Props.Where(property => property.GetType().Name == propertyType);
+        }
+
+        private IEnumerable<Property> GetForSaleProperties()
+        {
+            return Props.Where(property => property.ForSale);
         }
     }
 }

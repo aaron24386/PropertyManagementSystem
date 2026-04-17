@@ -58,6 +58,7 @@ namespace PropertyManagementSystem
         static private bool ExecuteAction(int action)
         {
             bool returnVal = true;
+            string input = "";
             switch (action)
             {
                 case 1:
@@ -70,13 +71,19 @@ namespace PropertyManagementSystem
                     community.DisplayForSaleProperties();
                     break;
                 case 4:
-                    community.DisplayResidents();
+                    community.DisplayAllResidents();
                     break;
                 case 5:
+                    input = CollectAddressName();
+                    community.DisplayResidentsByAddress(input);
                     break;
                 case 6:
+                    input = CollectAddressName();
+                    community.ToggleForSaleStatus(input);
                     break;
                 case 7:
+                    input = CollectAddressName();
+                    community.PurchaseProperty(input);
                     break;
                 case 8:
                     break;
@@ -160,6 +167,12 @@ namespace PropertyManagementSystem
                     shouldContinue = false;
                 }
             }
+        }
+
+        static private string CollectAddressName()
+        {
+            Console.WriteLine("Enter street address to lookup:");
+            return Console.ReadLine();
         }
     }
 }

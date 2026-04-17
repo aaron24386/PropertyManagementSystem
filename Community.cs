@@ -83,28 +83,8 @@ namespace PropertyManagementSystem
             Person mayor = FindResident(this.MayorId);
             Console.WriteLine($"<{this.id}> {this.name}. Population ({Residents.Count}). Mayor: {mayor.FullName}");
             Console.WriteLine("-----------------------------------------------------------------------");
-            foreach (Residential property in Props.Cast<Residential>())
-            {
-                Person resident = FindResident(property.OwnerId);
-                string forSaleText = (property.ForSale) ? "FOR SALE" : "NOT FOR SALE";
-                string apartmentText = "";
-                string houseText = "";
 
-                if (property is Apartment apartment)
-                {
-                    apartmentText = $"Apt.# {apartment.Unit}";
-                }
-                else
-                {
-                    House house = (House)property;
-                    houseText = $"... {house.GarageText()} : {house.Floors.ToString()} floor.\n";
-                }
-
-                Console.WriteLine($"Property Address: {property.StreetAddr} / {property.City} / {property.State} / {property.Zip}");
-                Console.WriteLine($"\tOwned By {resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}");
-                Console.WriteLine($"\t({forSaleText}) {property.Bedrooms} bedrooms \\ {property.Baths} baths \\ {property.Sqft} sq. ft. {apartmentText}");
-                Console.Write($"\t{houseText}\n");
-            }
+            LogProperties(Props);
         }
 
         public void DisplayProperties (string propertyType)
@@ -144,14 +124,70 @@ namespace PropertyManagementSystem
             }
         }
 
-        public void DisplayResidents ()
+        public void DisplayAllResidents ()
         {
             Console.WriteLine($"List of all residents in the {this.name} community.");
             Console.WriteLine("-----------------------------------------------------------------------\n");
 
-            foreach (Person resident in Residents)
+            LogResidents(Residents);
+        }
+
+        public void DisplayResidentsByAddress (string addressName)
+        {
+            IEnumerable<Property> properties = GetPropertiesByName(addressName);
+            IEnumerable<uint> ownerIds = properties.Select(property => property.OwnerId);
+
+            if (properties.Count() > 0)
             {
-                Console.WriteLine($"{resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}\n");
+                Console.WriteLine($"List of residents living at {addressName}:");
+                Console.WriteLine("-----------------------------------------------------------------------\n");
+
+                
+                IEnumerable<Person> residents = FindResidents(ownerIds);
+
+                LogResidents(residents);
+            }
+            else
+            {
+                Console.WriteLine($"{addressName} does not exist in the community");
+            }
+        }
+
+        public void ToggleForSaleStatus (string addressName)
+        {
+            Property property = GetPropertyByName(addressName);
+
+            if (property != null)
+            {
+                property.ForSale = !property.ForSale;
+                string forSaleText = property.ForSale ? "for sale" : "NOT for sale";
+
+                Console.WriteLine($"{addressName} is now listed as {forSaleText}!\n");
+            }
+            else
+            {
+                Console.WriteLine($"{addressName} does not exist in the community");
+            }
+        }
+
+        public void PurchaseProperty (string addressName)
+        {
+            Property property = GetPropertyByName(addressName);
+
+            if (property == null)
+            {
+                Console.WriteLine($"{addressName} does not exist in the community");
+            }
+            else if (property.ForSale)
+            {
+                property.ForSale = false;
+
+                Console.WriteLine($"Congratulations! You have successfully purchased this property!\n");
+                LogProperties(new[] { property });
+            }
+            else
+            {
+                Console.WriteLine($"{addressName} is not for sale.");
             }
         }
 
@@ -160,14 +196,63 @@ namespace PropertyManagementSystem
             return Residents.FirstOrDefault(resident => resident.id == ownerId);
         }
 
+        private IEnumerable<Person> FindResidents (IEnumerable<uint> ownerIds)
+        {
+            return Residents.Where(resident => ownerIds.Contains(resident.id));
+        }
+
         private IEnumerable<Property> GetProperties (string propertyType)
         {
             return Props.Where(property => property.GetType().Name == propertyType);
         }
 
-        private IEnumerable<Property> GetForSaleProperties()
+        private Property GetPropertyByName (string propertyName)
+        {
+            return Props.FirstOrDefault(property => property.StreetAddr == propertyName);
+        }
+
+        private IEnumerable<Property> GetPropertiesByName (string propertyName)
+        {
+            return Props.Where(property => property.StreetAddr == propertyName);
+        }
+
+        private IEnumerable<Property> GetForSaleProperties ()
         {
             return Props.Where(property => property.ForSale);
+        }
+
+        private void LogResidents(IEnumerable<Person> residents)
+        {
+            foreach (Person resident in residents)
+            {
+                Console.WriteLine($"{resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}\n");
+            }
+        }
+
+        private void LogProperties(IEnumerable<Property> properties)
+        {
+            foreach (Residential property in properties.Cast<Residential>())
+            {
+                Person resident = FindResident(property.OwnerId);
+                string forSaleText = (property.ForSale) ? "FOR SALE" : "NOT FOR SALE";
+                string apartmentText = "";
+                string houseText = "";
+
+                if (property is Apartment apartment)
+                {
+                    apartmentText = $"Apt.# {apartment.Unit}";
+                }
+                else
+                {
+                    House house = (House)property;
+                    houseText = $"... {house.GarageText()} : {house.Floors.ToString()} floor.\n";
+                }
+
+                Console.WriteLine($"Property Address: {property.StreetAddr} / {property.City} / {property.State} / {property.Zip}");
+                Console.WriteLine($"\tOwned By {resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}");
+                Console.WriteLine($"\t({forSaleText}) {property.Bedrooms} bedrooms \\ {property.Baths} baths \\ {property.Sqft} sq. ft. {apartmentText}");
+                Console.Write($"\t{houseText}\n");
+            }
         }
     }
 }

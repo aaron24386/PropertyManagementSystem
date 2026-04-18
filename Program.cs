@@ -85,12 +85,6 @@ namespace PropertyManagementSystem
                     input = CollectAddressName();
                     community.PurchaseProperty(input);
                     break;
-                case 8:
-                    break;
-                case 9:
-                    break;
-                case 10:
-                    break;
                 default:
                     Console.WriteLine($"{action} is an invalid action, please try again.");
                     returnVal = false;

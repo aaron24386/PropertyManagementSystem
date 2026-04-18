@@ -53,6 +53,7 @@ namespace PropertyManagementSystem
         {
             Residents.Add(person);
         }
+
         public void AddProperty (Property property)
         {
             bool wasAdded = Props.Add(property);

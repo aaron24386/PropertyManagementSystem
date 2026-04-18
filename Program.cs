@@ -11,6 +11,7 @@ namespace PropertyManagementSystem
 {
     internal class Program
     {
+        static string[] quitOptions = new string[] { "q", "e", "quit", "exit" };
         static Community community = new Community();
         static void Main(string[] args)
         {
@@ -19,12 +20,11 @@ namespace PropertyManagementSystem
 
             DisplayOptions();
 
-            string input = Console.ReadLine();
-            string[] quitOptions = new string[] { "q", "e", "quit", "exit" };
 
             bool shouldContinue = true;
             while (shouldContinue)
             {
+                string input = Console.ReadLine();
                 if (Int32.TryParse(input, out int validInput))
                 {
                     shouldContinue = ExecuteAction(validInput);
@@ -32,12 +32,11 @@ namespace PropertyManagementSystem
                 else if (Array.IndexOf(quitOptions, input.ToLower()) != -1)
                 {
                     Console.WriteLine("Exiting...");
-                    shouldContinue = false;
+                    break;
                 }
                 else
                 {
                     Console.WriteLine($"{input} is not a valid option, please try again");
-                    input = Console.ReadLine();
                 }
             }
         }
@@ -59,30 +58,32 @@ namespace PropertyManagementSystem
         static private bool ExecuteAction(int action)
         {
             bool returnVal = true;
+            string input = "";
             switch (action)
             {
                 case 1:
                     community.DisplayPropertyList();
                     break;
                 case 2:
-                    Console.WriteLine("Enter property type (Apartment/House)");
-                    Console.ReadLine();
+                    DetermineAddressType();
                     break;
                 case 3:
+                    community.DisplayForSaleProperties();
                     break;
                 case 4:
+                    community.DisplayAllResidents();
                     break;
                 case 5:
+                    input = CollectAddressName();
+                    community.DisplayResidentsByAddress(input);
                     break;
                 case 6:
+                    input = CollectAddressName();
+                    community.ToggleForSaleStatus(input);
                     break;
                 case 7:
-                    break;
-                case 8:
-                    break;
-                case 9:
-                    break;
-                case 10:
+                    input = CollectAddressName();
+                    community.PurchaseProperty(input);
                     break;
                 default:
                     Console.WriteLine($"{action} is an invalid action, please try again.");
@@ -99,7 +100,7 @@ namespace PropertyManagementSystem
             while (line != null)
             {
                 string[] person = line.Split('\t');
-                community.addResident(new Person(person));
+                community.AddResident(new Person(person));
                 line = sr.ReadLine();
             }
 
@@ -122,11 +123,11 @@ namespace PropertyManagementSystem
                     string[] property = line.Split('\t');
                     if (i == 0)
                     {
-                        community.addProperty(new Apartment(property));
+                        community.AddProperty(new Apartment(property));
                     }
                     else
                     {
-                        community.addProperty(new House(property));
+                        community.AddProperty(new House(property));
                     }
                     line = sr.ReadLine();
                 }
@@ -135,5 +136,37 @@ namespace PropertyManagementSystem
             }
         }
         
+        static private void DetermineAddressType()
+        {
+            string[] validPropertyTypes = new string[] { "apartment", "house" };
+            Console.WriteLine("Enter property type (Apartment/House)");
+
+            bool shouldContinue = true;
+            while (shouldContinue)
+            {
+                string input = Console.ReadLine();
+                int propertyIndex = Array.IndexOf(validPropertyTypes, input.ToLower());
+                if (propertyIndex == -1)
+                {
+                    Console.WriteLine($"{input} is not a valid option, please try again");
+                }
+                else if (Array.IndexOf(quitOptions, input.ToLower()) != -1)
+                {
+                    Console.WriteLine("Exiting...");
+                    break;
+                }
+                else
+                {
+                    community.DisplayProperties(propertyIndex == 0 ? "Apartment" : "House");
+                    shouldContinue = false;
+                }
+            }
+        }
+
+        static private string CollectAddressName()
+        {
+            Console.WriteLine("Enter street address to lookup:");
+            return Console.ReadLine();
+        }
     }
 }

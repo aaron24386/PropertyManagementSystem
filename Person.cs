@@ -28,6 +28,12 @@ namespace PropertyManagementSystem
 
         readonly DateTime birthday;
         private List<int> residenceIds = new List<int>();
+        public int[] ResidenceIds {
+            get
+            {
+                return residenceIds.ToArray();
+            }
+        }
 
         public Person ()
         {

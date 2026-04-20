@@ -61,12 +61,21 @@ namespace PropertyManagementSystem
             Int32.TryParse(args[4], out int year);
             Int32.TryParse(args[5], out int month);
             Int32.TryParse(args[6], out int day);
-            DateTime newBirthday = new DateTime(year, month, day);
-            birthday = newBirthday;
 
+            try
+            {
+                birthday = new DateTime(year, month, day);
+            }
+            catch
+            {
+                birthday = new DateTime();
+            }
 
-            Int32.TryParse(args[7], out int residenceId);
-            residenceIds.Add(residenceId);
+            if (args.Length >= 8)
+            {
+                Int32.TryParse(args[7], out int residenceId);
+                residenceIds.Add(residenceId);
+            }
             //IncrementNextId();
         }
 

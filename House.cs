@@ -21,11 +21,33 @@ namespace PropertyManagementSystem
 
         public House(string[] args) : base(args)
         {
-            Garage = args[12] == "T";
-            AttachedGarage = args[13] == "T";
+            if (args.Length >= 13)
+            {
+                Garage = args[12] == "T";
+            }
+            else
+            {
+                Garage = false;
+            }
 
-            uint.TryParse(args[14], out uint floors);
-            Floors = floors; 
+            if (args.Length >= 14)
+            {
+                AttachedGarage = args[13] == "T";
+            }
+            else
+            {
+                AttachedGarage = false;
+            }
+
+            if (args.Length >= 15)
+            {
+                uint.TryParse(args[14], out uint floors);
+                Floors = floors; 
+            }
+            else
+            {
+                Floors = 0;
+            }
         }
 
         public string GarageText()

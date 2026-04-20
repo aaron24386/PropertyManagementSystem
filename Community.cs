@@ -9,6 +9,9 @@ namespace PropertyManagementSystem
 {
     internal class Community : IComparable, IEnumerable
     {
+        const uint MAX_ID = 99999;
+
+        private static readonly List<uint> uniqueIds = new List<uint>();
         public readonly uint id;
         public readonly string name;
         uint MayorId { get; set; }
@@ -22,31 +25,44 @@ namespace PropertyManagementSystem
 
         public Community ()
         {
-            id = 99999;
+            id = GenerateUniqueId();
             MayorId = 0;
             name = "Dekalb";
             Props = new SortedSet<Property>();
             Residents = new SortedSet<Person>();
         }
 
-        public Community (string newName, Property newProperty, Person newResident)
+        public Community (string newName)
         {
-            id = 99999;
+            id = GenerateUniqueId();
             MayorId = 0;
             name = newName ?? "Dekalb";
             Props = new SortedSet<Property>();
-            bool isPropertyAdded = Props.Add(newProperty);
-            if (!isPropertyAdded)
-            {
-                throw new ArgumentException("Failed to add the new property");
-            }
+            //bool isPropertyAdded = Props.Add(newProperty);
+            //if (!isPropertyAdded)
+            //{
+            //    throw new ArgumentException("Failed to add the new property");
+            //}
 
             Residents = new SortedSet<Person>();
-            bool isResidentAdded = Residents.Add(newResident);
-            if (!isResidentAdded)
+            //bool isResidentAdded = Residents.Add(newResident);
+            //if (!isResidentAdded)
+            //{
+            //    throw new ArgumentException("Failed to add the new resident");
+            //}
+        }
+
+        private uint GenerateUniqueId ()
+        {
+            uint newId = 1;
+            while (uniqueIds.Exists(x => x == newId) && newId <= MAX_ID)
             {
-                throw new ArgumentException("Failed to add the new resident");
+                newId++;
             }
+
+            uniqueIds.Add(newId);
+
+            return newId;
         }
 
         public void AddResident (Person person)

@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +51,12 @@
   <ItemGroup>
     <Compile Include="Apartment.cs" />
     <Compile Include="Community.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="House.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Program.cs" />
@@ -61,9 +68,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="a.txt" />
-    <Content Include="p.txt" />
-    <Content Include="r.txt" />
+    <Content Include="Community\Dekalb\a.txt" />
+    <Content Include="Community\Dekalb\p.txt" />
+    <Content Include="Community\Dekalb\r.txt" />
+    <Content Include="Community\Sycamore\a.txt" />
+    <Content Include="Community\Sycamore\p.txt" />
+    <Content Include="Community\Sycamore\r.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -104,12 +104,11 @@ namespace PropertyManagementSystem
             LogProperties(Props);
         }
 
-        public void DisplayProperties (string propertyType)
+        public string[] DisplayProperties ()
         {
-            Console.WriteLine($"List of addresses of {propertyType} properties in the {this.name} community.");
-            Console.WriteLine("-----------------------------------------------------------------------\n");
-
-            IEnumerable<Property> residences = GetProperties(propertyType);
+            IEnumerable<Property> residences = Props;
+            string[] allProperties = new string[residences.Count()];
+            int i = 0;
             foreach (Property residence in residences)
             {
                 string unitText = " ";
@@ -118,8 +117,11 @@ namespace PropertyManagementSystem
                     unitText = $" Apt.# {apartment.Unit} ";
 
                 }
-                Console.WriteLine($"{residence.StreetAddr}{unitText}{residence.City}, {residence.State}, {residence.Zip}\n");
+                allProperties[i] = $"{residence.StreetAddr}{unitText}{residence.City}, {residence.State}, {residence.Zip}";
+                i++;
             }
+
+            return allProperties;
         }
 
         public void DisplayForSaleProperties ()
@@ -141,12 +143,17 @@ namespace PropertyManagementSystem
             }
         }
 
-        public void DisplayAllResidents ()
+        public string[] DisplayAllResidents ()
         {
-            Console.WriteLine($"List of all residents in the {this.name} community.");
-            Console.WriteLine("-----------------------------------------------------------------------\n");
+            string[] residentArr = new string[Residents.Count()];
+            int i = 0;
+            foreach (Person resident in Residents)
+            {
+                residentArr[i] = $"{resident.FullName} {resident.GetAge}, {resident.Occupation}";
+                i++;
+            }
 
-            LogResidents(Residents);
+            return residentArr;
         }
 
         public void DisplayResidentsByAddress (string addressName)
@@ -238,12 +245,17 @@ namespace PropertyManagementSystem
             return Props.Where(property => property.ForSale);
         }
 
-        private void LogResidents(IEnumerable<Person> residents)
+        private string[] LogResidents(IEnumerable<Person> residents)
         {
+            string[] residentArr = new string[residents.Count()];
+            int i = 0;
             foreach (Person resident in residents)
             {
-                Console.WriteLine($"{resident.FullName}, Age ({resident.GetAge}), Occupation: {resident.Occupation}\n");
+                residentArr[i] = $"{resident.FullName} {resident.GetAge}, {resident.Occupation}";
+                i++;
             }
+
+            return residentArr;
         }
 
         private void LogProperties(IEnumerable<Property> properties)

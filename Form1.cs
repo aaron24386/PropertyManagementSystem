@@ -43,7 +43,7 @@ namespace PropertyManagementSystem
             while (line != null)
             {
                 string[] person = line.Split('\t');
-                community.addResident(new Person(person));
+                community.AddResident(new Person(person));
                 line = sr.ReadLine();
             }
 
@@ -69,11 +69,11 @@ namespace PropertyManagementSystem
                     string[] property = line.Split('\t');
                     if (i == 0)
                     {
-                        community.addProperty(new Apartment(property));
+                        community.AddProperty(new Apartment(property));
                     }
                     else
                     {
-                        community.addProperty(new House(property));
+                        community.AddProperty(new House(property));
                     }
                     line = sr.ReadLine();
                 }
@@ -89,8 +89,8 @@ namespace PropertyManagementSystem
 
             if (community != null)
             {
-                residenceDropDown.DataSource = community.Props.ToArray();
-                personListBox.DataSource = community.Residents.ToArray();
+                residenceDropDown.DataSource = community.DisplayProperties();
+                personListBox.DataSource = community.DisplayAllResidents();
             }
         }
 
